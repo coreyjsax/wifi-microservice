@@ -11,8 +11,6 @@ router.get('/full', u.getAllUsersFull);
 
 router.get('/:userId', u.getUserById);
 
-router.put('/:userId', u.getUserByIdEdit);
-
 router.post('/create/:locId', u.findOrCreateUser);
 
 module.exports = router;

@@ -70,23 +70,7 @@ exports.findOrCreateUser = (req, res) => {
     });   
 }
 
-exports.getUserByIdEdit = (req, res) => {
-    let visit = {
-        ip: req.headers['x-forwarded-for'] ||
-        req.connection.remoteAddress,
-        location: req.params.locId,
-        date: Date.now()
-    }
 
-    User.findById(req.params.userId, (err, user) => {
-        Visit.create(visit, (err, userVisit) => {
-            userVisit.save();
-            user.visits.push(userVisit);
-            user.save();
-            res.status(200).send({status: 201, message: `user updated`, data: user});
-        })
-    })
-}
 
 exports.getAllUsersFull = (req, res) => {
     
