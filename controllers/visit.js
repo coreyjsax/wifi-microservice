@@ -16,3 +16,16 @@ exports.getAllVisits = (req, res) => {
             res.json(allVisits)
         })
 }
+
+exports.getVisitById = (req, res) => {
+    let visitPromise = 
+    Visit.findById(req.params.visitId)
+    .then((visit) => visit)
+    .catch((err) => {
+        res.status(500).send(err)
+    });
+
+    visitPromise.then((visit) => {
+        res.json(visit)
+    })
+}

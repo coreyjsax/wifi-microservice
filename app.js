@@ -26,7 +26,7 @@ const userRoutes = require('./routes/user');
 const visitRoutes = require('./routes/visit')
 
 app.use('/user', userRoutes);
-app.use('/visits', visitRoutes);
+app.use('/visit', visitRoutes);
 
 app.start = app.listen = function(){
     return server.listen.apply(server, arguments)
