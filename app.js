@@ -25,8 +25,17 @@ console.log(process.env.DB)
 const userRoutes = require('./routes/user');
 const visitRoutes = require('./routes/visit')
 
+app.get('/', (req, res) => {
+    res.json('welcome')
+});
+
 app.use('/user', userRoutes);
 app.use('/visit', visitRoutes);
+
+app.get('*', (req, res) => {
+    res.status(404).json('resource not found')
+});
+
 
 app.start = app.listen = function(){
     return server.listen.apply(server, arguments)
