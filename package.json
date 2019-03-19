@@ -1,0 +1,25 @@
+{
+  "name": "wifi-capture-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Corey Sax",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "dotenv": "^7.0.0",
+    "express": "^4.16.4",
+    "express-validator": "^5.3.1",
+    "findorcreate-promise": "^1.2.0",
+    "method-override": "^3.0.0",
+    "mongoose": "^5.4.19",
+    "mongoose-findorcreate": "^3.0.0",
+    "morgan": "^1.9.1",
+    "pm2": "^3.4.0",
+    "request-promise": "^4.2.4",
+    "request-promise-cache": "^2.0.1"
+  }
+}
