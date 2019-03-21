@@ -9,9 +9,13 @@ router.get('/', u.getAllUsers);
 
 router.get('/full', u.getAllUsersFull);
 
+router.get('/config', u.config);
+
 router.get('/:userId', u.getUserById);
 
 router.post('/create/:locId', u.findOrCreateUser);
+
+router.post('/email/:locId', u.testAddEmail);
 
 module.exports = router;
 

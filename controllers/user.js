@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const Visit = require('../models/visit')
 const mongoose = require('mongoose');
+const tools = require('../util/tools')
 
 mongoose.Promise = Promise;
 
@@ -40,7 +41,12 @@ exports.findOrCreateUser = (req, res) => {
                 if(err){
                     res.status(500).send(err)
                 }
-
+                let st = {
+                    name: 'Corey',
+                    email: 'corey@pizzaluce.com',
+                    store: ''
+                }
+               let ft = tools.addUserToFTEmail()
                res.status(201).send({status: 201, data: user})
           
             })
@@ -121,4 +127,16 @@ exports.searchUsers = (req, res) => {
     .exec((err, docs) => {
         
     })
+}
+
+exports.config = (req, res) => {
+    return tools.ftConfig()
+    .then((data) => res.json(data))
+    .catch((err) => err)
+}
+
+exports.testAddEmail = (req, res) => {
+    return tools.addUserToEmailList(req.body, req.params.locId)
+    .then((data) => res.json(data))
+    .catch((err) => res.json(err))
 }
