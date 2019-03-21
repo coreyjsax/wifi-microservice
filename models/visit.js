@@ -3,6 +3,7 @@
  const VisitSchema = new mongoose.Schema({
          location: String,
          ip: String,
+         mac: String,
          date: {
              type: Date, default: Date.now
          }

@@ -18,62 +18,68 @@ exports.findOrCreateUser = (req, res) => {
     let visit = {
         ip: req.headers['x-forwarded-for'] ||
         req.connection.remoteAddress,
+        mac: req.params.mac,
         location: req.params.locId,
         date: Date.now()
     }
 
-    let userPromise = 
-        
-        User.find({email: req.body.email})
-            .exec()
-            .then((user) => user)
-            .catch((err) => err);
+    let getUser = User.find({email: req.body.email}).exec();
+    let ftReq = tools.addUserToEmailList(req.body, req.params.locId);
 
-    userPromise.then((userMatches) => {
+    Promise.all([getUser, ftReq])
+    .then(([userMatches, ftRes]) => {
         
-        if (userMatches.length < 1) {
-            
-            let newUser = new User(newUserData);
-            let newVisit = new Visit(visit);
-           
-            newUser.visits.push(newVisit);
-            newUser.save((err, user) => {
-                if(err){
-                    res.status(500).send(err)
-                }
-                let st = {
-                    name: 'Corey',
-                    email: 'corey@pizzaluce.com',
-                    store: ''
-                }
-               let ft = tools.addUserToFTEmail()
-               res.status(201).send({status: 201, data: user})
-          
-            })
-      
-        } else {
-            
-            let user = userMatches[0];
-            let id = user._id
-            let userEmail = user.email;
-            let visit = {
-                ip: req.headers['x-forwarded-for'] ||
-                req.connection.remoteAddress,
-                location: req.params.locId,
-                date: Date.now()
+        let ftResCode = '';
+        let ftResMessage = '';
+
+        if (ftRes.meta){
+            ftResCode = ftRes.meta.code;
+
+            if (ftResCode === 200){
+                ftResMessage = ` has been added to FT email list`;
+            } else {
+                ftResMessage = ftRes.meta.info;
             }
 
+        } else if (ftRes.statusCode){
+            let ftMsg = JSON.parse(ftRes.body);
+            
+            ftResCode = ftRes.statusCode;
+            ftResMessage = ftMsg.meta.info;
+        }
+
+        if (userMatches.length < 1){
+            let newUser = new User(newUserData);
+            let newVisit = new Visit(visit);
+            
+            newVisit.save()
+            newUser.visits.push(newVisit);
+            newUser.save((err, user) => {
+                if (err) {
+                    res.status(500).send(err);
+                }
+                res.status(201).send({status: 201, user: user, ftStatus: {status: ftResCode, msg: ftResMessage}})
+            })
+
+        } else {
+
+            let matchedUser = userMatches[0];
+            let id = matchedUser._id;
+            
             User.findById(id, (err, user) => {
 
                 Visit.create(visit, (err, userVisit) => {
                     userVisit.save();
                     user.visits.push(userVisit);
                     user.save();
-                    res.status(200).send({status: 201, message: `user updated`, data: user});
+                    if (err) {
+                        res.status(500).send(err);
+                    }
+                    res.status(201).send({status: 201, user: user, ftStatus: {status: ftResCode, msg: ftResMessage}})
                 })
             })
         }
-    });   
+    })
 }
 
 
@@ -89,7 +95,11 @@ exports.getAllUsersFull = (req, res) => {
         });
 
     userPromise.then((allUsers) => {
-        res.json(allUsers)
+        if (!allUsers){
+            res.status(404).send({status: 404, message: 'users not found'});
+        } else {
+            res.json(allUsers)
+        }
     })
 }
 
@@ -103,8 +113,12 @@ exports.getAllUsers = (req, res) => {
             });
 
     userPromise.then((allUsers) => {
-        res.json(allUsers)
-    })
+        if (!allUsers){
+            res.status(404).send({status: 404, message: 'users not found'});
+        } else {
+            res.json(allUsers)
+        }
+    });
 }
 
 exports.getUserById = (req, res) => {
@@ -117,7 +131,13 @@ exports.getUserById = (req, res) => {
         });
 
     userPromise.then((user) => {
-        res.json(user);
+        if (!user) {
+            res.status(404).send({status: 404, message: 'user not found'});
+        } else {
+            res.json(user);
+        }
+    }).catch((err) => {
+        res.status(400).send({status: 400, message: err});
     })
 }
 
@@ -133,10 +153,4 @@ exports.config = (req, res) => {
     return tools.ftConfig()
     .then((data) => res.json(data))
     .catch((err) => err)
-}
-
-exports.testAddEmail = (req, res) => {
-    return tools.addUserToEmailList(req.body, req.params.locId)
-    .then((data) => res.json(data))
-    .catch((err) => res.json(err))
 }

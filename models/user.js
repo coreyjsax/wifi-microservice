@@ -7,8 +7,7 @@ const UserSchema = new mongoose.Schema({
     },
     email: String,
     sign_up_store: String,
-    visits: [{type: mongoose.Schema.Types.ObjectId, ref: 'Visit'}],
-    //Visit: { date, ip, }
+    visits: [{type: mongoose.Schema.Types.ObjectId, ref: 'Visit'}]
 })
 
 module.exports = mongoose.model('User', UserSchema);
