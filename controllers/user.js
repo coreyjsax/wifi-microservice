@@ -18,7 +18,7 @@ exports.findOrCreateUser = (req, res) => {
     let visit = {
         ip: req.headers['x-forwarded-for'] ||
         req.connection.remoteAddress,
-        mac: req.params.mac,
+        mac: req.body.mac,
         location: req.params.locId,
         date: Date.now()
     }
