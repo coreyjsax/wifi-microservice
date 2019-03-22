@@ -95,3 +95,12 @@ exports.validateIt = (req, res, next) => {
     }
     
 }
+
+exports.authenticate = (req, res, next) => {
+    if (req.get('token') === process.env.KEY){
+        next()
+    } else {
+        res.status(401).send({status: 401, message: 'unauthorized'})
+    }
+    
+}

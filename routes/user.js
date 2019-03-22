@@ -6,15 +6,15 @@ const tools = require('../util/tools');
 let t = tools;
 let u = userController;
 
-router.get('/', u.getAllUsers);
+router.get('/', t.authenticate, u.getAllUsers);
 
-router.get('/full', u.getAllUsersFull);
+router.get('/full', t.authenticate, u.getAllUsersFull);
 
-router.get('/config', u.config);
+router.get('/config', t.authenticate, u.config);
 
-router.get('/:userId', u.getUserById);
+router.get('/:userId', t.authenticate, u.getUserById);
 
-router.post('/create/:locId', t.validateIt, u.findOrCreateUser);
+router.post('/create/:locId', t.authenticate, t.validateIt, u.findOrCreateUser);
 
 module.exports = router;
 

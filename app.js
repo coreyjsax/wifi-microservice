@@ -8,10 +8,15 @@ const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const port = process.env.PORT;
 const dotenv = require('dotenv').config();
-const morgan = require('morgan')
+const morgan = require('morgan');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const helmet = require('helmet');
+
 
 mongoose.Promise = global.Promise;
-
+app.use(helmet())
+app.set('Secret', process.env.SECRET);
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(methodOverride("_method"));
@@ -19,8 +24,6 @@ app.use(expressValidator({}));
 app.use(morgan('dev'));
 
 mongoose.connect(process.env.DB);
-console.log(process.env.DB)
-
 
 const userRoutes = require('./routes/user');
 const visitRoutes = require('./routes/visit')
